@@ -11,9 +11,9 @@ public class Vase implements Runnable{
     private String name;
     private boolean seenVase;
     private static String door = "AVAILABLE";
-    private static Set<String> globalSet = new ConcurrentSkipListSet<>();
+    
 
-    private static ReentrantLock lock = new ReentrantLock(true);
+    
     
     
     
@@ -28,58 +28,35 @@ public class Vase implements Runnable{
     public void run()
     {
       
-      accessMaze(name);
+      //accessMaze(name);
+      criticalSection();
       
     }
-
-    private void accessMaze(String name)
-    {
-      while(true && globalSet.size() <= 8) 
-      {
-       // System.out.println("Currently " + s.size() + " has had a slice of pound cake");
-        if(lock.tryLock()) 
-        {
-            try 
-            {
-                // The lock has been acquired, so perform some operation on the shared resource
-                // ...
-                if(this.seenVase != true &&  globalSet.size() < 8 && isShowroomAvailable() )
-                {
-                  System.out.println("" + name + " has eneterd the showroom and has seen the glimmering crysal vase!");
-                  door = "BUSY";
-                  this.seenVase = true;
-                  globalSet.add(name);
-                    
-                  System.out.println("Currently " + globalSet.size() + " has saw the vase");
-        
-                }
-                else
-                {
-                  System.out.println("" + name + " has already entered the showroom and wants to explore the party :)");
-                  break; // Exit the loop when done
-                }
-                
-               
-                
-            } finally {
-                // Release the lock when done
-                door = "AVAILABLE";
-                System.out.println("" + name + " has opened the door to others");
-                lock.unlock();
-            }
-        } 
-        else 
-        {
-            // The lock is already held by another thread, so wait for a bit before trying again
+    private boolean flag = false;
+    
+    public void criticalSection() {
+        // Wait until the flag is false
+        while (!isShowroomAvailable()) {
             try {
-                Thread.sleep(0);
-                //condition.await();
+                Thread.sleep(100);
             } catch (InterruptedException e) {
-                // Handle the exception
+                e.printStackTrace();
             }
         }
-      } 
+        
+        // Set the flag to true
+        flag = true;
+        door = "BUSY";
+        this.seenVase = true;
+        // Critical section code here
+        System.out.println("" + name + " has eneterd the showroom and has seen the glimmering crysal vase!");
+        
+        // Set the flag back to false
+        flag = false;
+        door = "AVAILABLE";
     }
+    
+    
 
     private boolean isShowroomAvailable()
     {
