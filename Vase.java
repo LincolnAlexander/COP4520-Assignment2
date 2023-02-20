@@ -5,12 +5,12 @@ import java.security.IdentityScope;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Condition;
 
-public class Locky implements Runnable{
+public class Vase implements Runnable{
 
     // Variables for thraeds
     private String name;
-    private boolean ateCake;
-    private static boolean poundCake = true;
+    private boolean seenVase;
+    private static String door = "AVAILABLE";
     private static Set<String> globalSet = new ConcurrentSkipListSet<>();
 
     private static ReentrantLock lock = new ReentrantLock(true);
@@ -18,10 +18,10 @@ public class Locky implements Runnable{
     
     
     // Constructor
-    public Locky(String name, boolean ateCake )
+    public Vase(String name, boolean seenVase )
     {
       this.name = name;
-      this.ateCake = ateCake;
+      this.seenVase = seenVase;
       
     }
     // Runs findPrimes
@@ -37,33 +37,25 @@ public class Locky implements Runnable{
       while(true && globalSet.size() <= 8) 
       {
        // System.out.println("Currently " + s.size() + " has had a slice of pound cake");
-        if(lock.tryLock() ) 
+        if(lock.tryLock()) 
         {
             try 
             {
                 // The lock has been acquired, so perform some operation on the shared resource
                 // ...
-                if(this.ateCake != true &&  globalSet.size() < 8)
+                if(this.seenVase != true &&  globalSet.size() < 8 && isShowroomAvailable() )
                 {
-                  System.out.println("" + name + " has acquired the holy lock");
-                  if(consumedCake())
-                  {
-                    System.out.println("" + name + " consumed a slice of pound cake!");
-                    this.ateCake = true;
-                    globalSet.add(name);
+                  System.out.println("" + name + " has eneterd the showroom and has seen the glimmering crysal vase!");
+                  door = "BUSY";
+                  this.seenVase = true;
+                  globalSet.add(name);
                     
-                    System.out.println("Currently " + globalSet.size() + " has had a slice of pound cake");
-                  }
-                  else
-                  {
-                    System.out.println("" + name + " has a tummy ache. They will get a slice next time :(");
-                    
-                    
-                  }
+                  System.out.println("Currently " + globalSet.size() + " has saw the vase");
+        
                 }
                 else
                 {
-                  System.out.println("" + name + " has already had a slice of cake and are full :)");
+                  System.out.println("" + name + " has already entered the showroom and wants to explore the party :)");
                   break; // Exit the loop when done
                 }
                 
@@ -71,7 +63,8 @@ public class Locky implements Runnable{
                 
             } finally {
                 // Release the lock when done
-                System.out.println("" + name + " has released the lock");
+                door = "AVAILABLE";
+                System.out.println("" + name + " has opened the door to others");
                 lock.unlock();
             }
         } 
@@ -88,28 +81,18 @@ public class Locky implements Runnable{
       } 
     }
 
-    private boolean consumedCake()
+    private boolean isShowroomAvailable()
     {
-      if(poundCake == false)
+      if(door.equals("BUSY"))
       {
-        System.out.println("The last guest must have ate the pound cake, please wait while I fetch another.");
-        poundCake = true;
+        System.out.println("Sorry there is a guest inside, please come back again");
+        return false;
 
       }
 
-      Random random = new Random();
-      int randomNumber = random.nextInt(100); // Generates a random integer between 0 and 99
-      int threshold = 50; // The threshold value for the event
-
-      if(randomNumber > threshold) 
-      {
-        // The random number is greater than the threshold, so perform the event
-        poundCake = false;
-        return true;
-      }
 
 
-      return false;
+      return true;
     }
 
     
@@ -126,35 +109,35 @@ public class Locky implements Runnable{
       // Create eight threads and start them.
 
       // Thread 1
-      Locky m1 = new Locky("Eren Yeager", false);
+      Vase m1 = new Vase("Eren Yeager", false);
       Thread my1 = new Thread(m1);
       
       // Thread 2
-      Locky m2 = new Locky("Itachi Uchiha", false);
+      Vase m2 = new Vase("Itachi Uchiha", false);
       Thread my2 = new Thread(m2);
       
 
       // Thread 3
-      Locky m3 = new Locky("Gon Freecss", false);
+      Vase m3 = new Vase("Gon Freecss", false);
       Thread my3 = new Thread(m3);
 
       // Thread 4
-      Locky m4 = new Locky("Killua Zoldyck", false);
+      Vase m4 = new Vase("Killua Zoldyck", false);
       Thread my4 = new Thread(m4);
 
       // Thread 5
-      Locky m5 = new Locky("Miyamoto Musashi", false);
+      Vase m5 = new Vase("Miyamoto Musashi", false);
       Thread my5 = new Thread(m5);
       // Thread 6
-      Locky m6 = new Locky("Thorfinn Karlsefni", false);
+      Vase m6 = new Vase("Thorfinn Karlsefni", false);
       Thread my6 = new Thread(m6);
 
       // Thread 7
-      Locky m7 = new Locky("Ken Kaneki", false);
+      Vase m7 = new Vase("Ken Kaneki", false);
       Thread my7 = new Thread(m7);
       
       // Thread 8
-      Locky m8 = new Locky("Yuji Itadori", false);
+      Vase m8 = new Vase("Yuji Itadori", false);
       Thread my8 = new Thread(m8);
 
       // Start all threads
