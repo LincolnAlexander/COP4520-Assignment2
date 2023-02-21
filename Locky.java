@@ -24,7 +24,7 @@ public class Locky implements Runnable{
       this.ateCake = ateCake;
       
     }
-    // Runs findPrimes
+    // Runs accessMaze
     public void run()
     {
       
@@ -41,8 +41,8 @@ public class Locky implements Runnable{
         {
             try 
             {
-                // The lock has been acquired, so perform some operation on the shared resource
-                // ...
+                // The lock has been acquired, so perform some operation on the shared resource if the cake hasn't been eaten
+                
                 if(this.ateCake != true &&  globalSet.size() < 8)
                 {
                   System.out.println("" + name + " has acquired the holy lock");
@@ -64,7 +64,8 @@ public class Locky implements Runnable{
                 else
                 {
                   System.out.println("" + name + " has already had a slice of cake and are full :)");
-                  break; // Exit the loop when done
+                  // Exit loop since they already had a slice.
+                  break; 
                 }
                 
                
@@ -77,12 +78,15 @@ public class Locky implements Runnable{
         } 
         else 
         {
-            // The lock is already held by another thread, so wait for a bit before trying again
-            try {
-                Thread.sleep(0);
-                //condition.await();
-            } catch (InterruptedException e) {
-                // Handle the exception
+            // The lock is already held by another thread, so wait for a bit before trying again 
+            try 
+            {
+              // Make sure other threads have a chance
+              Thread.sleep(0);
+                
+            } catch (InterruptedException e) 
+            {
+              // Handle the exception
             }
         }
       } 
@@ -189,17 +193,7 @@ public class Locky implements Runnable{
       end = System.currentTimeMillis();
       
       // Create primes.txt and write neccessary info ot it.
-      try
-      {
-        FileWriter w = new FileWriter("primes.txt");
-        w.write("Execution Time: " + (end - start) + "ms\n");
-        
-        w.close();
-      }
-      catch(Exception e)
-      {
-        System.out.println(e);
-      }
+      System.out.println("The program finished in " +  (end - start) + "ms\n");
 
     }
   }

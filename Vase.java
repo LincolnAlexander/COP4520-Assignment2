@@ -29,13 +29,13 @@ public class Vase implements Runnable{
     {
       
       //accessMaze(name);
-      criticalSection();
+      acessShowroom();
       
     }
-    private boolean flag = false;
     
-    public void criticalSection() {
-        // Wait until the flag is false
+    
+    public void acessShowroom() {
+        // Wait until the room is available
         while (!isShowroomAvailable()) {
             try {
                 Thread.sleep(100);
@@ -44,20 +44,20 @@ public class Vase implements Runnable{
             }
         }
         
-        // Set the flag to true
-        flag = true;
+        // Set the availability to BUSY since someone is inside
+        
         door = "BUSY";
         this.seenVase = true;
-        // Critical section code here
+        
         System.out.println("" + name + " has eneterd the showroom and has seen the glimmering crysal vase!");
         
-        // Set the flag back to false
-        flag = false;
+        // Set the avavilabity of showroom back 
+        
         door = "AVAILABLE";
     }
     
     
-
+    // Checks if showroom is availabe and returns true/false
     private boolean isShowroomAvailable()
     {
       if(door.equals("BUSY"))
@@ -148,18 +148,8 @@ public class Vase implements Runnable{
       // Stop timer
       end = System.currentTimeMillis();
       
-      // Create primes.txt and write neccessary info ot it.
-      try
-      {
-        FileWriter w = new FileWriter("primes.txt");
-        w.write("Execution Time: " + (end - start) + "ms\n");
-        
-        w.close();
-      }
-      catch(Exception e)
-      {
-        System.out.println(e);
-      }
+      
+      System.out.println("The program finished in " +  (end - start) + "ms\n");
 
     }
   }
